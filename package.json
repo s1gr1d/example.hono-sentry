@@ -1,0 +1,17 @@
+{
+  "name": "example.hono-sentry",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy --minify",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "format": "npx prettier . --write"
+  },
+  "dependencies": {
+    "hono": "^4.10.4"
+  },
+  "devDependencies": {
+    "prettier": "3.6.2",
+    "wrangler": "^4.4.0"
+  }
+}
