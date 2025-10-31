@@ -1,21 +1,5 @@
-```txt
-npm install
-npm run dev
-```
+## 🔥 Hono Examples with Sentry
 
-```txt
-npm run deploy
-```
+This repository contains example projects testing and demonstrating integrating Sentry with Hono applications.
 
-[For generating/synchronizing types based on your Worker configuration run](https://developers.cloudflare.com/workers/wrangler/commands/#types):
-
-```txt
-npm run cf-typegen
-```
-
-Pass the `CloudflareBindings` as generics when instantiation `Hono`:
-
-```ts
-// src/index.ts
-const app = new Hono<{ Bindings: CloudflareBindings }>();
-```
+Each directory represents a different Hono template (e.g. Cloudflare Workers, Deno or Bun).

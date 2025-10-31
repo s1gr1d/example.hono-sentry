@@ -1,17 +1,13 @@
 {
   "name": "example.hono-sentry",
-  "type": "module",
+  "workspaces": [
+    "cloudflare-workers"
+  ],
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy --minify",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "cloudflare-workers:dev": "npm run dev -w cloudflare-workers",
     "format": "npx prettier . --write"
   },
-  "dependencies": {
-    "hono": "^4.10.4"
-  },
   "devDependencies": {
-    "prettier": "3.6.2",
-    "wrangler": "^4.4.0"
+    "prettier": "3.6.2"
   }
 }

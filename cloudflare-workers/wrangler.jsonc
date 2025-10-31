@@ -3,9 +3,10 @@
   "name": "example-hono-sentry",
   "main": "src/index.ts",
   "compatibility_date": "2025-10-31",
-  // "compatibility_flags": [
-  //   "nodejs_compat"
-  // ],
+  "compatibility_flags": ["nodejs_compat"],
+  "version_metadata": {
+    "binding": "CF_VERSION_METADATA",
+  },
   // "vars": {
   //   "MY_VAR": "my-variable"
   // },
