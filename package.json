@@ -1,9 +1,11 @@
 {
   "name": "example.hono-sentry",
   "workspaces": [
+    "bun",
     "cloudflare-workers"
   ],
   "scripts": {
+    "bun:dev": "npm run dev -w bun",
     "cloudflare-workers:dev": "npm run dev -w cloudflare-workers",
     "format": "npx prettier . --write"
   },
