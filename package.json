@@ -1,6 +1,7 @@
 {
   "name": "example.hono-sentry",
   "workspaces": [
+    "_shared",
     "_sentry/prototype-1",
     "bun",
     "cloudflare-workers"

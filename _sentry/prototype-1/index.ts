@@ -31,12 +31,12 @@ export const sentry = (
       hasExecutionContext = false;
     }
     const sentry = Sentry.initAndBind(HonoClient, {
-      dsn: c.env?.SENTRY_DSN ?? c.env?.NEXT_PUBLIC_SENTRY_DSN,
+      dsn: context.env?.SENTRY_DSN ?? context.env?.NEXT_PUBLIC_SENTRY_DSN,
       // request: context.req.raw,
       // context: hasExecutionContext ? context.executionCtx : new MockContext(),
       ...options,
     });
-    c.set("sentry", sentry);
+    context.set("sentry", sentry);
     /*
     if (callback) {
       callback(sentry);

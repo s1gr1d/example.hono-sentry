@@ -6,18 +6,18 @@ const examplePosts = [
   { id: "2", title: "Second Post", content: "This is the second post." },
 ];
 
-const api = new Hono();
+const postsAPI = new Hono();
 
-api.use("/posts/*", cors());
+postsAPI.use("/posts/*", cors());
 
-api.get("/posts", (c) => {
+postsAPI.get("/posts", (c) => {
   return c.json({ posts: examplePosts });
 });
 
-api.get("/posts/:id", (c) => {
+postsAPI.get("/posts/:id", (c) => {
   const id = c.req.param("id");
   const post = examplePosts.find((p) => p.id === id);
   return c.json({ post });
 });
 
-export default api;
+export default postsAPI;

@@ -1,0 +1,13 @@
+{
+  "name": "@sentry-prototype/shared",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "types": "index.ts",
+  "dependencies": {
+    "@sentry/core": "^10.22.0",
+    "@sentry/types": "^10.22.0"
+  },
+  "peerDependencies": {
+    "hono": "^4.10.4"
+  }
+}
