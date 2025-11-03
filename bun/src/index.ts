@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { sentry } from "@sentry-prototype/1";
 
 import * as Sentry from "@sentry/bun";
 import api from "./api";
@@ -10,6 +11,8 @@ Sentry.init({
   tracesSampleRate: 1,
   debug: true,
 });
+
+app.use("*", sentry());
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");
