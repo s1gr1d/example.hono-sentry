@@ -4,7 +4,7 @@ import { basicAPI, postsAPI } from "@sentry-prototype/shared";
 
 const app = new Hono();
 
-app.route("/bun-api", postsAPI);
+app.route("/posts-api", postsAPI);
 app.route("/", basicAPI);
 
 export default Sentry.withSentry((env: Env) => {

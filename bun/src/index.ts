@@ -18,7 +18,7 @@ Sentry.init({
 
 app.use("*", sentry());
 
-app.route("/bun-api", postsAPI);
+app.route("/posts-api", postsAPI);
 app.route("/", basicAPI);
 
 export default app;
