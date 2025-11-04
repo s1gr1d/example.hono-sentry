@@ -46,10 +46,7 @@ export const sentry = (
   setAsyncLocalStorageAsyncContextStrategy();
 
   return async (context, next) => {
-    console.log(
-      "- - - - - - - - - - - - - new request - - - - - - - - - - - -",
-    );
-    console.log("another request");
+    console.log("- - - - - - - - - - -  new request - - - - - - - - - - -");
 
     const isolationScope = getIsolationScope();
     const newIsolationScope =
