@@ -27,18 +27,7 @@ import {
   hasExecutionCtx,
   logScopeData,
 } from "@sentry-prototype/shared";
-
-class MockContext implements ExecutionContext {
-  passThroughOnException(): void {
-    throw new Error("Method not implemented.");
-  }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async waitUntil(promise: Promise<any>): Promise<void> {
-    await promise;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  props: any;
-}
+import { setAsyncLocalStorageAsyncContextStrategy } from "./asyncContext";
 
 const defaultStackParser: StackParser = createStackParser(
   nodeStackLineParser(),
@@ -52,61 +41,67 @@ export const sentry = (
   options: HonoOptions | undefined = {},
   // callback?: (sentry: Toucan) => void,
 ): MiddlewareHandler => {
+  console.log("- - - - - - - - call sentry middleware - - - - - - - - - -");
+
+  setAsyncLocalStorageAsyncContextStrategy();
+
   return async (context, next) => {
+    console.log(
+      "- - - - - - - - - - - - - new request - - - - - - - - - - - -",
+    );
     console.log("another request");
+
     const isolationScope = getIsolationScope();
     const newIsolationScope =
       isolationScope === getDefaultIsolationScope()
         ? isolationScope.clone()
         : isolationScope;
 
-    return await withIsolationScope(
-      newIsolationScope,
-      async (isolationScope) => {
-        logScopeData("isolationScope", isolationScope);
-        logScopeData("newIsolationScope", newIsolationScope);
+    console.log("routePath1", routePath(context));
 
-        // ExecutionCtx and FetchEvent only for Cloudflare Workers
-        // hasFetchEvent(context);
-        // hasExecutionCtx(context);
+    return await withIsolationScope(newIsolationScope, async () => {
+      console.log("routePath2", routePath(context));
+      logScopeData("isolationScope", newIsolationScope);
 
-        const sentryClient = _init({
-          dsn: context.env?.SENTRY_DSN ?? options.dsn,
-          context,
-          ...options,
-          // request: context.req.raw,
-          // context: hasExecutionContext ? context.executionCtx : new MockContext(),
-        });
+      // ExecutionCtx and FetchEvent only for Cloudflare Workers
+      // hasFetchEvent(context);
+      // hasExecutionCtx(context);
 
-        newIsolationScope.setClient(sentryClient);
+      const sentryClient = _init({
+        dsn: context.env?.SENTRY_DSN ?? options.dsn,
+        context,
+        ...options,
+        // request: context.req.raw,
+        // context: hasExecutionContext ? context.executionCtx : new MockContext(),
+      });
 
-        isolationScope.setSDKProcessingMetadata({
-          normalizedRequest: winterCGRequestToRequestData(
-            hasFetchEvent(context) ? context.event.request : context.req.raw,
-          ),
-        });
-
-        /*
+      /*
         if (callback) {
             callback(sentryClient);
         }
         */
 
-        await next();
+      await next();
 
-        // fixme: transaction name is only sent to Sentry when on the isolationScope
-        logScopeData("isolationScope-before", isolationScope);
-        isolationScope.setTransactionName(
-          `${context.req.method} ${routePath(context)}`,
-        );
-        logScopeData("isolationScope-after", isolationScope);
+      newIsolationScope.setClient(sentryClient);
 
-        if (context.error) {
-          console.log("captureException...");
-          getClient()?.captureException(context.error);
-        }
-      },
-    );
+      newIsolationScope.setTransactionName(
+        `${context.req.method} ${routePath(context)}`,
+      );
+
+      newIsolationScope.setSDKProcessingMetadata({
+        normalizedRequest: winterCGRequestToRequestData(
+          hasFetchEvent(context) ? context.event.request : context.req.raw,
+        ),
+      });
+
+      logScopeData("isolationscope-after", newIsolationScope);
+
+      if (context.error) {
+        console.log("captureException...");
+        sentryClient?.captureException(context.error);
+      }
+    });
   };
 };
 

@@ -30,7 +30,7 @@ export function logScopeData(label: string, scope: Scope): void {
     "normalizedRequest.url",
     scope.getScopeData().sdkProcessingMetadata.normalizedRequest?.url,
   );
-  console.log(" - - - - - - - - - - - - - - - - - - - - - - - - -");
+  console.log("--- --- --- --- --- --- --- --- ---");
 }
 
 /*

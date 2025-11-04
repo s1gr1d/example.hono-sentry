@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { matchedRoutes, routePath, baseRoutePath, basePath } from "hono/route";
+import { routePath } from "hono/route";
 
 const examplePosts = [
   { id: "1", title: "First Post", content: "This is the first post." },
@@ -20,10 +20,7 @@ postsAPI.get("/posts/error", (c) => {
 });
 
 postsAPI.get("/posts/error/:cause", (c) => {
-  console.log("Matched Routes:", matchedRoutes(c));
-  console.log("Route Path:", routePath(c));
-  console.log("Base Route Path:", baseRoutePath(c));
-  console.log("Base Path:", basePath(c));
+  console.log("Route Path (in route):", routePath(c));
 
   throw new Error("This is a test post error for Sentry!", {
     cause: c.req.param("cause"),
