@@ -1,11 +1,16 @@
 import {
+  addExceptionMechanism,
   Client,
   ClientOptions,
   Event,
+  eventFromUnknownInput,
   EventHint,
-  Outcome,
   ParameterizedString,
+  resolvedSyncPromise,
   SeverityLevel,
+  createStackParser,
+  nodeStackLineParser,
+  getIsolationScope,
 } from "@sentry/core";
 
 export interface HonoClientOptions extends ClientOptions {
@@ -13,62 +18,54 @@ export interface HonoClientOptions extends ClientOptions {
 }
 
 export class HonoClient extends Client {
-  _options: HonoClientOptions;
-
   public constructor(options: HonoClientOptions) {
     super(options);
-
-    this._options = options;
   }
 
-  eventFromException(
-    _exception: unknown,
-    _hint?: EventHint,
-  ): PromiseLike<Event> {
-    throw new Error("Method not implemented.");
-  }
-  eventFromMessage(
-    _message: ParameterizedString,
-    _level?: SeverityLevel,
-    _hint?: EventHint,
-  ): PromiseLike<Event> {
-    throw new Error("Method not implemented.");
-  }
-
-  public captureException(exception: any, hint?: EventHint): string {
-    // Implement exception capturing
-    return "";
-  }
-
-  public captureMessage(
-    message: string,
-    level?: string,
+  /**
+   * Creates an {@link Event} from all inputs to `captureException` and non-primitive inputs to `captureMessage`.
+   */
+  public eventFromException(
+    exception: unknown,
     hint?: EventHint,
-  ): string {
-    // Implement message capturing
-    return "";
+  ): PromiseLike<Event> {
+    const syntheticException = hint?.syntheticException || undefined;
+
+    console.log("eventFromException...");
+
+    // Ensure we have a valid stackParser
+    const stackParser =
+      this._options.stackParser || createStackParser(nodeStackLineParser());
+
+    const event = eventFromUnknownInput(this, stackParser, exception, hint);
+
+    addExceptionMechanism(event);
+    event.level = "error";
+
+    if (hint?.event_id) {
+      event.event_id = hint.event_id;
+    }
+
+    // console.log("top frame", event.exception.values[0].stacktrace);
+
+    return resolvedSyncPromise(event);
   }
 
-  public captureEvent(event: Event, hint?: EventHint): string {
-    // Implement event capturing
-    return "";
-  }
+  /**
+   * Creates an {@link Event} from primitive inputs to `captureMessage`.
+   */
+  public eventFromMessage(
+    message: ParameterizedString,
+    level: SeverityLevel = "info",
+    hint?: EventHint,
+  ): PromiseLike<Event> {
+    const event: Event = {
+      message: {
+        message: String(message),
+      },
+      level,
+    };
 
-  public getOptions(): HonoClientOptions {
-    return this._options;
+    return Promise.resolve(event);
   }
-
-  public init(): void {
-    // Initialize the client
-  }
-
-  public flush(timeout?: number): Promise<boolean> {
-    return Promise.resolve(true);
-  }
-
-  public close(timeout?: number): Promise<boolean> {
-    return Promise.resolve(true);
-  }
-
-  // Add other required Client interface methods
 }

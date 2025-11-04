@@ -16,7 +16,7 @@ Sentry.init({
 
  */
 
-app.use("*", sentry());
+app.use("*", sentry({ dsn: import.meta.env.SENTRY_DSN }));
 
 app.route("/posts-api", postsAPI);
 app.route("/", basicAPI);
