@@ -1,11 +1,11 @@
 #!/bin/bash
 
-BASE_URL="http://localhost:3000"
+BASE_URL="http://localhost:8787"
 
 # Check if server is running
 check_server() {
     if ! curl -s "$BASE_URL/" > /dev/null 2>&1; then
-        echo "Server is not running. Please start the server first."
+        echo "Server is not running on $BASE_URL. Start the server and try again."
         exit 1
     fi
 }

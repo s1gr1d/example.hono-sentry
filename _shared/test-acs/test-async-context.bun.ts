@@ -91,7 +91,7 @@ class RealAsyncContextTester {
     console.log("Starting Async Context Strategy tests...\n");
 
     if (!(await this.checkServer())) {
-      console.error("Server is not running. Please start the server first.");
+      console.error(`Server is not running on ${BASE_URL}. Start the server first.`);
       process.exit(1);
     }
 
