@@ -1,4 +1,4 @@
-import type { Context, MiddlewareHandler } from "hono";
+import type { Context, ExecutionContext, MiddlewareHandler } from "hono";
 import { routePath } from "hono/route";
 import {
   BaseTransportOptions,
@@ -6,6 +6,8 @@ import {
   createStackParser,
   dedupeIntegration,
   functionToStringIntegration,
+  getClient,
+  getCurrentScope,
   getDefaultIsolationScope,
   getIntegrationsToSetup,
   getIsolationScope,
@@ -16,12 +18,17 @@ import {
   Options,
   StackParser,
   stackParserFromStackParserOptions,
+  startNewTrace,
   winterCGRequestToRequestData,
   withIsolationScope,
 } from "@sentry/core";
 import { HonoClient } from "./hono-client";
 import { makeFetchTransport } from "./transport";
-import { hasFetchEvent } from "@sentry-prototype/shared";
+import {
+  hasFetchEvent,
+  hasExecutionCtx,
+  logScopeData,
+} from "@sentry-prototype/shared";
 import { setAsyncLocalStorageAsyncContextStrategy } from "./asyncContext";
 
 const defaultStackParser: StackParser = createStackParser(
@@ -38,7 +45,7 @@ export const sentry = (
 ): MiddlewareHandler => {
   console.log("- - - - - - - - call sentry middleware - - - - - - - - - -");
 
-  setAsyncLocalStorageAsyncContextStrategy();
+  // setAsyncLocalStorageAsyncContextStrategy();
 
   return async (context, next) => {
     console.log("- - - - - - - - - - -  new request - - - - - - - - - - -");
@@ -49,50 +56,53 @@ export const sentry = (
         ? isolationScope.clone()
         : isolationScope;
 
-    return await withIsolationScope(newIsolationScope, async () =>
-      continueTrace(
-        {
-          sentryTrace: context.req.raw.headers.get("sentry-trace") ?? "",
-          baggage: context.req.raw.headers.get("baggage"),
-        },
-        async () => {
-          // ExecutionCtx and FetchEvent only for Cloudflare Workers
-          // hasFetchEvent(context);
-          // hasExecutionCtx(context);
+    console.log("routePath1", routePath(context));
 
-          const sentryClient = _init({
-            dsn: context.env?.SENTRY_DSN ?? options.dsn,
-            context,
-            ...options,
-          });
+    console.log("routePath2", routePath(context));
+    logScopeData("isolationScope", newIsolationScope);
 
-          /*
-          if (callback) {
-              callback(sentryClient);
-          }
-          */
+    // ExecutionCtx and FetchEvent only for Cloudflare Workers
+    // hasFetchEvent(context);
+    // hasExecutionCtx(context);
 
-          newIsolationScope.setClient(sentryClient);
+    const sentryClient = _init({
+      dsn: context.env?.SENTRY_DSN ?? options.dsn,
+      context,
+      ...options,
+      // request: context.req.raw,
+      // context: hasExecutionContext ? context.executionCtx : new MockContext(),
+    });
 
-          newIsolationScope.setSDKProcessingMetadata({
-            normalizedRequest: winterCGRequestToRequestData(
-              hasFetchEvent(context) ? context.event.request : context.req.raw,
-            ),
-          });
+    /*
+        if (callback) {
+            callback(sentryClient);
+        }
+        */
 
-          await next(); // Handler runs in between. Before is Request ⤴ and afterward is Response ⤵
+    await next();
 
-          newIsolationScope.setTransactionName(
-            `${context.req.method} ${routePath(context)}`,
-          );
+    // isolationScope.setClient(sentryClient);
 
-          if (context.error) {
-            console.log("captureException...");
-            sentryClient?.captureException(context.error);
-          }
-        },
-      ),
+    isolationScope.setTransactionName(
+      `${context.req.method} ${routePath(context)}`,
     );
+
+    isolationScope.setSDKProcessingMetadata({
+      normalizedRequest: winterCGRequestToRequestData(
+        hasFetchEvent(context) ? context.event.request : context.req.raw,
+      ),
+    });
+
+    logScopeData("isolationscope-after", newIsolationScope);
+
+    console.log("scoope", getCurrentScope().getScopeData());
+
+    console.log("scope", newIsolationScope.getPropagationContext());
+
+    if (context.error) {
+      console.log("captureException...");
+      sentryClient?.captureException(context.error);
+    }
   };
 };
 

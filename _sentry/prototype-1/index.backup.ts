@@ -1,4 +1,4 @@
-import type { Context, MiddlewareHandler } from "hono";
+import type { Context, ExecutionContext, MiddlewareHandler } from "hono";
 import { routePath } from "hono/route";
 import {
   BaseTransportOptions,
@@ -6,6 +6,8 @@ import {
   createStackParser,
   dedupeIntegration,
   functionToStringIntegration,
+  getClient,
+  getCurrentScope,
   getDefaultIsolationScope,
   getIntegrationsToSetup,
   getIsolationScope,
@@ -16,12 +18,17 @@ import {
   Options,
   StackParser,
   stackParserFromStackParserOptions,
+  startNewTrace,
   winterCGRequestToRequestData,
   withIsolationScope,
 } from "@sentry/core";
 import { HonoClient } from "./hono-client";
 import { makeFetchTransport } from "./transport";
-import { hasFetchEvent } from "@sentry-prototype/shared";
+import {
+  hasFetchEvent,
+  hasExecutionCtx,
+  logScopeData,
+} from "@sentry-prototype/shared";
 import { setAsyncLocalStorageAsyncContextStrategy } from "./asyncContext";
 
 const defaultStackParser: StackParser = createStackParser(
@@ -49,6 +56,8 @@ export const sentry = (
         ? isolationScope.clone()
         : isolationScope;
 
+    console.log("routePath1", routePath(context));
+
     return await withIsolationScope(newIsolationScope, async () =>
       continueTrace(
         {
@@ -56,6 +65,9 @@ export const sentry = (
           baggage: context.req.raw.headers.get("baggage"),
         },
         async () => {
+          console.log("routePath2", routePath(context));
+          logScopeData("isolationScope", newIsolationScope);
+
           // ExecutionCtx and FetchEvent only for Cloudflare Workers
           // hasFetchEvent(context);
           // hasExecutionCtx(context);
@@ -64,15 +76,23 @@ export const sentry = (
             dsn: context.env?.SENTRY_DSN ?? options.dsn,
             context,
             ...options,
+            // request: context.req.raw,
+            // context: hasExecutionContext ? context.executionCtx : new MockContext(),
           });
 
           /*
-          if (callback) {
-              callback(sentryClient);
-          }
-          */
+        if (callback) {
+            callback(sentryClient);
+        }
+        */
+
+          await next();
 
           newIsolationScope.setClient(sentryClient);
+
+          newIsolationScope.setTransactionName(
+            `${context.req.method} ${routePath(context)}`,
+          );
 
           newIsolationScope.setSDKProcessingMetadata({
             normalizedRequest: winterCGRequestToRequestData(
@@ -80,11 +100,11 @@ export const sentry = (
             ),
           });
 
-          await next(); // Handler runs in between. Before is Request ⤴ and afterward is Response ⤵
+          logScopeData("isolationscope-after", newIsolationScope);
 
-          newIsolationScope.setTransactionName(
-            `${context.req.method} ${routePath(context)}`,
-          );
+          console.log("scoope", getCurrentScope().getScopeData());
+
+          console.log("scope", newIsolationScope.getPropagationContext());
 
           if (context.error) {
             console.log("captureException...");
