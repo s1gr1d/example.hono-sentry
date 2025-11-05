@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "main": "index.ts",
   "types": "index.ts",
+  "scripts": {
+    "test:acs-bun": "bun run test-acs/test-async-context.bun.ts",
+    "test:acs-bash": "bash test-acs/test-async-context.sh"
+  },
   "dependencies": {
     "@sentry/core": "^10.22.0",
     "@sentry/types": "^10.22.0"

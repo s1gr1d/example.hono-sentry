@@ -9,6 +9,8 @@
   "scripts": {
     "bun:dev": "npm run dev -w bun",
     "cloudflare-workers:dev": "npm run dev -w cloudflare-workers",
+    "test:acs-bun": "npm run test:acs-bun -w _shared",
+    "test:acs-bash": "npm run test:acs-bash -w _shared",
     "format": "npx prettier . --write"
   },
   "devDependencies": {
