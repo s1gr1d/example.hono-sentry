@@ -1,0 +1,22 @@
+{
+  "name": "nodejs",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node --env-file .env --import ./dist/instrument.js dist/src/index.js",
+    "build-start": "npm run build && npm run start"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.6",
+    "@sentry/node": "^10.22.0",
+    "hono": "^4.10.4",
+    "@sentry-prototype/1": "*",
+    "@sentry-prototype/shared": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "tsx": "^4.7.1",
+    "typescript": "^5.8.3"
+  }
+}

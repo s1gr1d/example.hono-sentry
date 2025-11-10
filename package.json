@@ -4,11 +4,13 @@
     "_shared",
     "_sentry/prototype-1",
     "bun",
-    "cloudflare-workers"
+    "cloudflare-workers",
+    "nodejs"
   ],
   "scripts": {
     "bun:dev": "npm run dev -w bun",
     "cloudflare-workers:dev": "npm run dev -w cloudflare-workers",
+    "node:build-start": "npm run build-start -w nodejs",
     "test:acs-bun": "npm run test:acs-bun -w _shared",
     "test:acs-bash": "npm run test:acs-bash -w _shared",
     "format": "npx prettier . --write",
