@@ -9,7 +9,8 @@
   },
   "dependencies": {
     "@sentry/core": "^10.22.0",
-    "@sentry/types": "^10.22.0"
+    "@sentry/types": "^10.22.0",
+    "ioredis":"^5.8.2"
   },
   "peerDependencies": {
     "hono": "^4.10.4"
