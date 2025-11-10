@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node --env-file .env --import ./dist/instrument.js dist/src/index.js",
+    "start": "node --env-file .env --import @sentry/node/preload dist/src/index.js",
     "build-start": "npm run build && npm run start"
   },
   "dependencies": {

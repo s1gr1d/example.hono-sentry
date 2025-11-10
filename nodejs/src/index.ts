@@ -1,6 +1,6 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
-import { sentry } from "@sentry-prototype/1";
+import { sentryNode } from "@sentry-prototype/node";
 
 import {
   basicAPI,
@@ -11,7 +11,14 @@ import {
 
 const app = new Hono();
 
-app.use("*", sentry({ dsn: process.env.SENTRY_DSN }));
+app.use(
+  "*",
+  sentryNode({
+    dsn: process.env.SENTRY_DSN,
+    tracesSampleRate: 1,
+    debug: true,
+  }),
+);
 
 app.route("/", basicAPI);
 app.route("/posts-api", postsAPI);
