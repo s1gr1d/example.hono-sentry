@@ -1,28 +1,29 @@
 import type { Context, MiddlewareHandler } from "hono";
 import { routePath } from "hono/route";
 import {
-  BaseTransportOptions,
+  type BaseTransportOptions,
   continueTrace,
   createStackParser,
   dedupeIntegration,
   functionToStringIntegration,
+  getActiveSpan,
   getDefaultIsolationScope,
   getIntegrationsToSetup,
   getIsolationScope,
   initAndBind,
-  Integration,
+  type Integration,
   linkedErrorsIntegration,
   nodeStackLineParser,
-  Options,
-  StackParser,
+  type Options,
+  type StackParser,
   stackParserFromStackParserOptions,
   winterCGRequestToRequestData,
   withIsolationScope,
 } from "@sentry/core";
-import { HonoClient } from "./hono-client";
-import { makeFetchTransport } from "./transport";
+import { HonoClient } from "./hono-client.js";
+import { makeFetchTransport } from "./transport.js";
 import { hasFetchEvent } from "@sentry-prototype/shared";
-import { setAsyncLocalStorageAsyncContextStrategy } from "./asyncContext";
+import { setAsyncLocalStorageAsyncContextStrategy } from "./asyncContext.js";
 
 const defaultStackParser: StackParser = createStackParser(
   nodeStackLineParser(),

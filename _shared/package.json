@@ -1,7 +1,8 @@
 {
   "name": "@sentry-prototype/shared",
+  "type": "module",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "index.js",
   "types": "index.ts",
   "scripts": {
     "test:acs-bun": "bun run test-acs/test-async-context.bun.ts",
@@ -10,7 +11,7 @@
   "dependencies": {
     "@sentry/core": "^10.22.0",
     "@sentry/types": "^10.22.0",
-    "ioredis":"^5.8.2"
+    "ioredis": "^5.8.2"
   },
   "peerDependencies": {
     "hono": "^4.10.4"

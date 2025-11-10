@@ -1,13 +1,13 @@
 import {
   addExceptionMechanism,
   Client,
-  ClientOptions,
-  Event,
+  type ClientOptions,
+  type Event,
   eventFromUnknownInput,
-  EventHint,
-  ParameterizedString,
+  type EventHint,
+  type ParameterizedString,
   resolvedSyncPromise,
-  SeverityLevel,
+  type SeverityLevel,
   createStackParser,
   nodeStackLineParser,
   getIsolationScope,
@@ -60,6 +60,7 @@ export class HonoClient extends Client {
     hint?: EventHint,
   ): PromiseLike<Event> {
     const event: Event = {
+      // @ts-expect-error
       message: {
         message: String(message),
       },

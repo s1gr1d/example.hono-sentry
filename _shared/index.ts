@@ -1,6 +1,6 @@
-export { default as basicAPI } from "./routers/basic-api";
-export { default as postsAPI } from "./routers/post-api";
-export { default as redisAPI } from "./routers/redis-api";
-export { default as testAcsAPI } from "./test-acs/test-endpoints";
+export { default as basicAPI } from "./routers/basic-api.js";
+export { default as postsAPI } from "./routers/post-api.js";
+export { default as redisAPI } from "./routers/redis-api.js";
+export { default as testAcsAPI } from "./test-acs/test-endpoints.js";
 
-export * from "./utils";
+export * from "./utils.js";

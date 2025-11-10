@@ -1,4 +1,4 @@
-import { Env, Hono } from "hono";
+import { type Env, Hono } from "hono";
 import * as Sentry from "@sentry/cloudflare";
 import { basicAPI, postsAPI, testAcsAPI } from "@sentry-prototype/shared";
 

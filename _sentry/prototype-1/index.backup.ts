@@ -1,7 +1,7 @@
 import type { Context, ExecutionContext, MiddlewareHandler } from "hono";
 import { routePath } from "hono/route";
 import {
-  BaseTransportOptions,
+  type BaseTransportOptions,
   continueTrace,
   createStackParser,
   dedupeIntegration,
@@ -12,11 +12,11 @@ import {
   getIntegrationsToSetup,
   getIsolationScope,
   initAndBind,
-  Integration,
+  type Integration,
   linkedErrorsIntegration,
   nodeStackLineParser,
-  Options,
-  StackParser,
+  type Options,
+  type StackParser,
   stackParserFromStackParserOptions,
   startNewTrace,
   winterCGRequestToRequestData,

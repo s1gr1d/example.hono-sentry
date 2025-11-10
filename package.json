@@ -11,9 +11,12 @@
     "cloudflare-workers:dev": "npm run dev -w cloudflare-workers",
     "test:acs-bun": "npm run test:acs-bun -w _shared",
     "test:acs-bash": "npm run test:acs-bash -w _shared",
-    "format": "npx prettier . --write"
+    "format": "npx prettier . --write",
+    "build": "tsc",
+    "clean:js-files": "find . -type f -name '*.js' -not -path './node_modules/*' -delete"
   },
   "devDependencies": {
-    "prettier": "3.6.2"
+    "prettier": "3.6.2",
+    "typescript": "^5.8.3"
   }
 }

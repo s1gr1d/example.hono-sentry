@@ -18,8 +18,10 @@ export function makeFetchTransport(options: BaseTransportOptions): Transport {
     request: TransportRequest,
   ): PromiseLike<TransportMakeRequestResponse> {
     const requestOptions: RequestInit = {
+      // @ts-expect-error
       body: request.body,
       method: "POST",
+      // @ts-expect-error
       headers: options.headers,
     };
 
