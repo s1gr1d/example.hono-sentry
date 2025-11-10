@@ -22,9 +22,9 @@ postsAPI.get("/posts/error", (c) => {
 postsAPI.get("/posts/error/:cause", (c) => {
   console.log("Route Path (in route):", routePath(c));
 
-  throw new Error("This is a test post error for Sentry!", {
-    cause: c.req.param("cause"),
-  });
+  const cause = c.req.param("cause");
+
+  throw new Error(`This is a test post error: ${cause}`, { cause });
 });
 
 postsAPI.get("/posts/:id", (c) => {
