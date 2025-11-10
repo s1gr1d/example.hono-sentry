@@ -43,13 +43,7 @@ export const sentry = (
   return async (context, next) => {
     console.log("- - - - - - - - - - -  new request - - - - - - - - - - -");
 
-    const isolationScope = getIsolationScope();
-    const newIsolationScope =
-      isolationScope === getDefaultIsolationScope()
-        ? isolationScope.clone()
-        : isolationScope;
-
-    return await withIsolationScope(newIsolationScope, async () =>
+    return await withIsolationScope(async (isolationScope) =>
       continueTrace(
         {
           sentryTrace: context.req.raw.headers.get("sentry-trace") ?? "",
@@ -72,9 +66,9 @@ export const sentry = (
           }
           */
 
-          newIsolationScope.setClient(sentryClient);
+          isolationScope.setClient(sentryClient);
 
-          newIsolationScope.setSDKProcessingMetadata({
+          isolationScope.setSDKProcessingMetadata({
             normalizedRequest: winterCGRequestToRequestData(
               hasFetchEvent(context) ? context.event.request : context.req.raw,
             ),
@@ -82,7 +76,7 @@ export const sentry = (
 
           await next(); // Handler runs in between. Before is Request ⤴ and afterward is Response ⤵
 
-          newIsolationScope.setTransactionName(
+          isolationScope.setTransactionName(
             `${context.req.method} ${routePath(context)}`,
           );
 
