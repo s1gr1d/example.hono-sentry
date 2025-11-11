@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@sentry/cloudflare": "^10.22.0",
+    "@sentry-prototype/cloudflare": "*",
     "@sentry-prototype/shared": "*",
     "hono": "^4.10.4"
   },

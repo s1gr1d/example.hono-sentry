@@ -3,19 +3,28 @@ import { Redis } from "ioredis";
 
 const redisAPI = new Hono();
 
-const redis = new Redis();
+let redis: Redis | null = null;
+
+function getRedisClient() {
+  if (!redis) {
+    redis = new Redis();
+  }
+  return redis;
+}
 
 redisAPI.get("/set/sample-key/:value", (c) => {
   const value = c.req.param("value");
+  const client = getRedisClient();
 
   console.log(`Setting key: "sample-key" with value: ${value}`);
-  redis.set("sample-key", value);
+  client.set("sample-key", value);
 
   return c.text(`Redis SET: sample-key = ${value}`);
 });
 
 redisAPI.get("/get/sample-key", async (c) => {
-  const result = await redis.get("sample-key");
+  const client = getRedisClient();
+  const result = await client.get("sample-key");
 
   return c.text(`Redis GET: ${result}`);
 });
