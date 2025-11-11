@@ -1,5 +1,5 @@
 {
-  "name": "@sentry-prototype/1",
+  "name": "@sentry-prototype/erorrs-only",
   "type": "module",
   "version": "1.0.0",
   "main": "index.js",

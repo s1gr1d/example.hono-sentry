@@ -10,6 +10,7 @@ import {
   getDefaultIsolationScope,
   getIntegrationsToSetup,
   getIsolationScope,
+  getRootSpan,
   initAndBind,
   type Integration,
   linkedErrorsIntegration,
@@ -24,6 +25,7 @@ import { HonoClient } from "./hono-client.js";
 import { makeFetchTransport } from "./transport.js";
 import { hasFetchEvent } from "@sentry-prototype/shared";
 import { setAsyncLocalStorageAsyncContextStrategy } from "./asyncContext.js";
+import * as Sentry from "@sentry/node";
 
 const defaultStackParser: StackParser = createStackParser(
   nodeStackLineParser(),
@@ -32,6 +34,15 @@ const defaultStackParser: StackParser = createStackParser(
 export interface HonoOptions extends Options<BaseTransportOptions> {
   context?: Context;
 }
+
+/*
+Sentry.init({
+  dsn: import.meta.env.SENTRY_DSN,
+  tracesSampleRate: 1,
+  debug: true,
+});
+
+ */
 
 export const sentry = (
   options: HonoOptions | undefined = {},
@@ -55,11 +66,14 @@ export const sentry = (
           // hasFetchEvent(context);
           // hasExecutionCtx(context);
 
+          /*
           const sentryClient = _init({
             dsn: context.env?.SENTRY_DSN ?? options.dsn,
             context,
             ...options,
           });
+
+             */
 
           /*
           if (callback) {
@@ -67,7 +81,7 @@ export const sentry = (
           }
           */
 
-          isolationScope.setClient(sentryClient);
+          // isolationScope.setClient(sentryClient);
 
           isolationScope.setSDKProcessingMetadata({
             normalizedRequest: winterCGRequestToRequestData(
@@ -77,13 +91,24 @@ export const sentry = (
 
           await next(); // Handler runs in between. Before is Request ⤴ and afterward is Response ⤵
 
+          const activeSpan = getActiveSpan();
+          if (activeSpan) {
+            activeSpan.updateName(
+              `${context.req.method} ${routePath(context)}`,
+            );
+            Sentry.updateSpanName(
+              getRootSpan(activeSpan),
+              `${context.req.method} ${routePath(context)}`,
+            );
+          }
+
           isolationScope.setTransactionName(
             `${context.req.method} ${routePath(context)}`,
           );
 
           if (context.error) {
             console.log("captureException...");
-            sentryClient?.captureException(context.error);
+            // sentryClient?.captureException(context.error);
           }
         },
       ),

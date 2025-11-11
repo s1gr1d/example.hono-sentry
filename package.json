@@ -2,7 +2,7 @@
   "name": "example.hono-sentry",
   "workspaces": [
     "_shared",
-    "_sentry/prototype-1",
+    "_sentry/prototype-errors-only",
     "_sentry/prototype-cloudflare",
     "_sentry/prototype-node",
     "bun",

@@ -6,7 +6,7 @@
   "dependencies": {
     "@sentry/bun": "^10.22.0",
     "hono": "^4.10.4",
-    "@sentry-prototype/1": "*",
+    "@sentry-prototype/errors-only": "*",
     "@sentry-prototype/shared": "*"
   },
   "devDependencies": {
