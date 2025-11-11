@@ -30,6 +30,13 @@ app.use(
   }),
 );
 
+/* // usage with context
+app.use("*", async (c, next) => {
+  const middleware = sentryCloudflare({});
+  return middleware(c, next);
+});
+ */
+
 app.route("/", basicAPI);
 app.route("/posts-api", postsAPI);
 app.route("/redis", redisAPI);
