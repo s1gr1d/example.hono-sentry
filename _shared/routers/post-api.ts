@@ -1,10 +1,21 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { routePath } from "hono/route";
+import userAPI from "./user-api";
 
 const examplePosts = [
-  { id: "1", title: "First Post", content: "This is the first post." },
-  { id: "2", title: "Second Post", content: "This is the second post." },
+  {
+    id: "1",
+    title: "First Post",
+    content: "This is the first post.",
+    userId: "1",
+  },
+  {
+    id: "2",
+    title: "Second Post",
+    content: "This is the second post.",
+    userId: "2",
+  },
 ];
 
 const postsAPI = new Hono();
@@ -30,6 +41,19 @@ postsAPI.get("/posts/error/:cause", (c) => {
 postsAPI.get("/posts/:id", (c) => {
   const id = c.req.param("id");
   const post = examplePosts.find((p) => p.id === id);
+  return c.json({ post });
+});
+
+postsAPI.get("/posts/:id/user/:userId/", async (c) => {
+  const userResponse = await userAPI.request(`/user/${c.req.param("userId")}`);
+
+  const userId = (await userResponse.json()).id;
+
+  const id = c.req.param("id");
+
+  const post = examplePosts
+    .filter((post) => post.userId === userId)
+    .find((p) => p.id === id);
   return c.json({ post });
 });
 
