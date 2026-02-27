@@ -45,6 +45,7 @@ postsAPI.get("/posts/:id", (c) => {
 });
 
 postsAPI.get("/posts/:id/user/:userId/", async (c) => {
+postsAPI.get("/posts/:id/user/:userId", async (c) => {
   const userResponse = await userAPI.request(`/user/${c.req.param("userId")}`);
 
   const userId = (await userResponse.json()).id;
